@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "277225301421",
+    "project_id": "interview-creation-porta-70852",
+    "storage_bucket": "interview-creation-porta-70852.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277225301421:android:08f25f46051a7c765bed24",
+        "android_client_info": {
+          "package_name": "com.sayantanbanerjee.interviewcreationportal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277225301421-74q3768o6re8qp8o64956o8pllhiv08q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sayantanbanerjee.interviewcreationportal",
+            "certificate_hash": "671419aca386c2468c7e3073473e980c7cda1c9e"
+          }
+        },
+        {
+          "client_id": "277225301421-rspfa7l9154s690i50ole4sa2sm645ce.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjaH3yRWi9PoHHVy_mjwDOuABRdt9-Czk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277225301421-rspfa7l9154s690i50ole4sa2sm645ce.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
