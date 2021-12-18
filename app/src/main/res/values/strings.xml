@@ -2,4 +2,7 @@
     <string name="app_name">Interview Creation Portal</string>
     <string name="meeting">meeting</string>
     <string name="users">users</string>
+    <string name="interview_creation_portal">INTERVIEW CREATION PORTAL</string>
+    <string name="add_user">ADD USER</string>
+    <string name="add_meeting">add_meeting</string>
 </resources>
