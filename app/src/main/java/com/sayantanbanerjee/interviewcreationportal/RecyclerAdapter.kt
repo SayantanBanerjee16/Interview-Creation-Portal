@@ -1,5 +1,6 @@
 package com.sayantanbanerjee.interviewcreationportal
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sayantanbanerjee.interviewcreationportal.data.Meeting
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 class RecyclerAdapter(private val context: Context, private val meetings: List<Meeting>) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
@@ -17,12 +22,17 @@ class RecyclerAdapter(private val context: Context, private val meetings: List<M
         return ViewHolder(view)
     }
 
+    @SuppressLint("SimpleDateFormat")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val meeting = meetings[position]
         holder.meetingRoomName.text = meeting.name
-     //   new java.util.Date(Long.parseLong(timeInMillis))
-        holder.timeStampStart.text = meeting.slot.startStamp
-        holder.timeStampEnd.text = meeting.slot.endStamp
+
+        val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy, hh.mm aa")
+        val convertedStartDate = simpleDateFormat.format(meeting.slot.startStamp.toLong())
+        holder.timeStampStart.text = convertedStartDate.toString()
+
+        val convertedEndDate = simpleDateFormat.format(meeting.slot.endStamp.toLong())
+        holder.timeStampEnd.text = convertedEndDate.toString()
     }
 
     override fun getItemCount(): Int {

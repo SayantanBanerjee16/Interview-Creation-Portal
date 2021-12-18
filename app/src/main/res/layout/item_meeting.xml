@@ -17,19 +17,19 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/meetingRoomName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="20dp"
+                android:drawableStart="@drawable/ic_baseline_emoji_people_24"
+                android:drawablePadding="10dp"
                 android:padding="8dp"
                 android:text="@string/meeting_name"
                 android:textColor="@color/deepBlue"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:drawableLeftCompat="@drawable/ic_baseline_emoji_people_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -38,13 +38,13 @@
                 android:id="@+id/timestampStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="20dp"
+                android:drawableStart="@drawable/ic_baseline_timer_24"
+                android:drawablePadding="10dp"
                 android:padding="8dp"
                 android:text="@string/start_time"
                 android:textColor="@color/deepBlue"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:drawableLeftCompat="@drawable/ic_baseline_timer_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/meetingRoomName" />
@@ -53,13 +53,13 @@
                 android:id="@+id/timeStampEnd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="20dp"
+                android:drawableStart="@drawable/ic_baseline_done_outline_24"
+                android:drawablePadding="10dp"
                 android:padding="8dp"
                 android:text="@string/end_time"
                 android:textColor="@color/deepBlue"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:drawableLeftCompat="@drawable/ic_baseline_done_outline_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/timestampStart" />
