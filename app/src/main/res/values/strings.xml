@@ -5,4 +5,7 @@
     <string name="interview_creation_portal">INTERVIEW CREATION PORTAL</string>
     <string name="add_user">ADD USER</string>
     <string name="add_meeting">add_meeting</string>
+    <string name="add_a_new_user">ADD A NEW USER</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="enter_email_address">Enter Email Address</string>
 </resources>

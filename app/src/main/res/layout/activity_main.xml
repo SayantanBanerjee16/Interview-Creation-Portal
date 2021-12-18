@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/displayView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/nova_mono"
@@ -30,7 +30,7 @@
         android:contentDescription="@string/add_user"
         android:src="@drawable/ic_baseline_person_add_alt_1_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView" />
+        app:layout_constraintStart_toStartOf="@+id/displayView" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddMeeting"
@@ -41,6 +41,6 @@
         android:contentDescription="@string/add_meeting"
         android:src="@drawable/ic_baseline_add_to_queue_48"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/textView" />
+        app:layout_constraintEnd_toEndOf="@+id/displayView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
