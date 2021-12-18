@@ -135,6 +135,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
     }
 
+    // Validation of fields before uploading in the server.
     private fun validationOfFields(): Boolean {
         val nameOfMeeting = meetingName.editText?.text.toString()
         if (nameOfMeeting == "") {
@@ -158,6 +159,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         return true
     }
 
+    // Conversion of start dateTime and end dateTime to EPOCH timeStamp
     private fun parseDateTimeToTimeStamp() {
 
         val dateTimeStart =
@@ -220,6 +222,5 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         }
 
     }
-
 
 }

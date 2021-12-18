@@ -2,6 +2,9 @@ package com.sayantanbanerjee.interviewcreationportal
 
 import android.content.Context
 import android.widget.Toast
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.sayantanbanerjee.interviewcreationportal.data.Meeting
@@ -26,7 +29,12 @@ class FirebaseConnections {
             ).show()
         }
 
-        fun uploadMeetingToFirebase(context: Context, meetingName: String, timestampStart: String, timestampEnd: String) {
+        fun uploadMeetingToFirebase(
+            context: Context,
+            meetingName: String,
+            timestampStart: String,
+            timestampEnd: String
+        ) {
             val reference = Firebase.database.reference
             // create the Meeting class
             val meetingId = System.currentTimeMillis().toString()
