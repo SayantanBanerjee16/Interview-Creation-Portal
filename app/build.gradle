@@ -46,4 +46,6 @@ dependencies {
 
     // Firebase dependency
     implementation platform('com.google.firebase:firebase-bom:29.0.2')
+    // Dependency for the Realtime Database library
+    implementation 'com.google.firebase:firebase-database-ktx'
 }
