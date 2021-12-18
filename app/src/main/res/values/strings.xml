@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Interview Creation Portal</string>
+    <string name="meeting">meeting</string>
+    <string name="users">users</string>
 </resources>

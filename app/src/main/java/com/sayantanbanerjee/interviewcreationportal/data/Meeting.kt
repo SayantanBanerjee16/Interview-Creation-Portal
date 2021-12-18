@@ -6,12 +6,10 @@ package com.sayantanbanerjee.interviewcreationportal.data
  * @param id: Unique ID of the meeting.
  * @param name: Name of the meeting.
  * @param slot: Slot (startStamp and endStamp) of the meeting.
- * @param users: List of users present in the meeting.
  */
 
 data class Meeting(
         val id : String,
         val name : String,
         val slot: Slot,
-        val users : List<String>
 )
