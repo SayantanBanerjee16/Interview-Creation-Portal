@@ -3,7 +3,6 @@ package com.sayantanbanerjee.interviewcreationportal
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 // The activity class of the base screen, where all the scheduled interviews displayed,

@@ -8,4 +8,9 @@
     <string name="add_a_new_user">ADD A NEW USER</string>
     <string name="enter_name">Enter Name</string>
     <string name="enter_email_address">Enter Email Address</string>
+    <string name="no_network">No Network Connection Available</string>
+    <string name="empty_field_name">Name field cannot be empty!</string>
+    <string name="empty_field_email">Email field cannot be empty!</string>
+    <string name="invalid_email_address">Not a valid Email address!</string>
+    <string name="user_uploaded_to_firebase">New User Added  In Server</string>
 </resources>
