@@ -9,12 +9,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sayantanbanerjee.interviewcreationportal.data.Meeting
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
-class RecyclerAdapter(private val context: Context, private val meetings: List<Meeting>) :
-    RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+class MeetingAdapter(private val context: Context, private val meetings: List<Meeting>) :
+    RecyclerView.Adapter<MeetingAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context)

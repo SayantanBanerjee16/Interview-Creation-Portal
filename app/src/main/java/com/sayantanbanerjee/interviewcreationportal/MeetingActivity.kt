@@ -14,6 +14,8 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -38,6 +40,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     private lateinit var chooseEndTimeButton: Button
     private lateinit var addMeetingButton: Button
     private lateinit var addUserToTheMeeting: Button
+    private lateinit var adapter: UserAdapter
+    private lateinit var recyclerList: RecyclerView
 
     // Initialize all the variables which holds date and time
     var startTimeClicked: Boolean = false
@@ -60,6 +64,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         chooseEndTimeButton = findViewById(R.id.chooseEndTimePicker)
         addMeetingButton = findViewById(R.id.addMeetingButton)
         addUserToTheMeeting = findViewById(R.id.addUserToMeetingButton)
+        recyclerList =
+            findViewById<RecyclerView>(R.id.usersInInterview) as RecyclerView
 
         // Code to choose the date from date picker dialog.
         chooseDateButton.setOnClickListener {
@@ -178,7 +184,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                             usersNameList.add(name)
                         }
 
-                        dialog(usersNameList)
+                        dialog(usersNameList, usersList)
 
 
                     }
@@ -190,18 +196,26 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             })
     }
 
-    private fun dialog(usersNameList: MutableList<String>) {
+    private fun dialog(usersNameList: MutableList<String>, usersList: List<User>) {
         LovelyChoiceDialog(this)
             .setTopColorRes(R.color.darkRed)
             .setTitle(R.string.selectContact)
             .setIcon(R.drawable.ic_baseline_person_add_alt_1_24)
             .setItemsMultiChoice(
                 usersNameList
-            ) { _, items ->
+            ) { positions, items ->
+                val selectedUserList: MutableList<User> = mutableListOf()
+                for (pos in positions) {
+                    selectedUserList.add(usersList.get(pos))
+                }
+                adapter =
+                    UserAdapter(applicationContext, selectedUserList)
+                recyclerList.adapter = adapter
+                recyclerList.layoutManager = LinearLayoutManager(applicationContext)
                 Toast.makeText(
                     this@MeetingActivity,
-                    items.toString(),
-                    Toast.LENGTH_SHORT
+                    "Contact List Updated",
+                    Toast.LENGTH_LONG
                 )
                     .show()
             }

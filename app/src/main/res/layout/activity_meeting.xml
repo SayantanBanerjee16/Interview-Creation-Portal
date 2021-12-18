@@ -120,6 +120,14 @@
         app:start_color="@color/gradientStart"
         app:stroke="3dp" />
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/usersInInterview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/addMeetingButton"
+        app:layout_constraintTop_toBottomOf="@+id/addUserToMeetingButton" />
+
     <com.bartbergmans.gradientbutton.views.GradientButton
         android:id="@+id/addMeetingButton"
         android:layout_width="wrap_content"

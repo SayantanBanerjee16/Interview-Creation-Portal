@@ -25,4 +25,5 @@
     <string name="add_users_to_the_meeting">ADD USERS TO THE MEETING</string>
     <string name="selectContact">Select Users From the List</string>
     <string name="confirm">Confirm</string>
+    <string name="user_name">User Name</string>
 </resources>

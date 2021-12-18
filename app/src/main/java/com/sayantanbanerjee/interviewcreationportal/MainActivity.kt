@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     // Variable binding Add User Floating Action Button view to it
     private lateinit var addUserButton: FloatingActionButton
     private lateinit var addMeetingButton: FloatingActionButton
-    private lateinit var adapter: RecyclerAdapter
+    private lateinit var adapter: MeetingAdapter
     private lateinit var recyclerList : RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                         Log.i("###", meetingRooms.size.toString())
 
                         adapter =
-                            RecyclerAdapter(applicationContext, meetingRooms)
+                            MeetingAdapter(applicationContext, meetingRooms)
                         recyclerList.adapter = adapter
                         recyclerList.layoutManager = LinearLayoutManager(applicationContext)
 
