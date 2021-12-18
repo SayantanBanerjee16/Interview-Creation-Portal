@@ -8,15 +8,24 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.sayantanbanerjee.interviewcreationportal.data.User
+import com.yarolegovich.lovelydialog.LovelyChoiceDialog
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
+
 
 // This activity is responsible for creation / updation of a meeting.
 class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
@@ -28,6 +37,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     private lateinit var chooseStartTimeButton: Button
     private lateinit var chooseEndTimeButton: Button
     private lateinit var addMeetingButton: Button
+    private lateinit var addUserToTheMeeting: Button
 
     // Initialize all the variables which holds date and time
     var startTimeClicked: Boolean = false
@@ -49,6 +59,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         chooseStartTimeButton = findViewById(R.id.chooseStartTimePicker)
         chooseEndTimeButton = findViewById(R.id.chooseEndTimePicker)
         addMeetingButton = findViewById(R.id.addMeetingButton)
+        addUserToTheMeeting = findViewById(R.id.addUserToMeetingButton)
 
         // Code to choose the date from date picker dialog.
         chooseDateButton.setOnClickListener {
@@ -132,6 +143,70 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                 }
             }
         }
+
+        // First it will fetch the user details from the server and display in a list.
+        // From the list, it will display in a recycler view,
+        // then afterwards it will update at the firebase.
+        addUserToTheMeeting.setOnClickListener {
+            if (NetworkConnectivity.isNetworkAvailable(this))
+                fetchUsersList()
+            else {
+                Toast.makeText(this, getString(R.string.no_network), Toast.LENGTH_LONG).show()
+            }
+
+        }
+
+    }
+
+    private fun fetchUsersList() {
+        val reference = Firebase.database.reference
+        reference.child(getString(R.string.users)).addListenerForSingleValueEvent(
+            object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+
+                        val usersList: MutableList<User> = mutableListOf()
+                        val usersNameList: MutableList<String> = mutableListOf()
+                        for (dataSnapshot in snapshot.children) {
+                            Log.i("###", dataSnapshot.toString())
+                            val id = dataSnapshot.child("id").value.toString()
+                            val name = dataSnapshot.child("name").value.toString()
+                            val email = dataSnapshot.child("email").value.toString()
+                            val currentUser =
+                                User(id, name, email)
+                            usersList.add(currentUser)
+                            usersNameList.add(name)
+                        }
+
+                        dialog(usersNameList)
+
+
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+    }
+
+    private fun dialog(usersNameList: MutableList<String>) {
+        LovelyChoiceDialog(this)
+            .setTopColorRes(R.color.darkRed)
+            .setTitle(R.string.selectContact)
+            .setIcon(R.drawable.ic_baseline_person_add_alt_1_24)
+            .setItemsMultiChoice(
+                usersNameList
+            ) { _, items ->
+                Toast.makeText(
+                    this@MeetingActivity,
+                    items.toString(),
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
+            .setConfirmButtonText(R.string.confirm)
+            .show()
 
     }
 

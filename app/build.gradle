@@ -31,6 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
 }
 
 dependencies {
@@ -50,4 +53,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx'
     // UI dependency for gradient buttons
     implementation 'com.github.bartbergmans:GradientButton:1.0.0'
+    implementation 'com.yarolegovich:lovely-dialog:1.1.1'
 }
