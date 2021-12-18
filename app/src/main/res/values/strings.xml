@@ -13,4 +13,9 @@
     <string name="empty_field_email">Email field cannot be empty!</string>
     <string name="invalid_email_address">Not a valid Email address!</string>
     <string name="user_uploaded_to_firebase">New User Added  In Server</string>
+    <string name="add_a_new_meeting">ADD A NEW MEETING</string>
+    <string name="enter_name_of_meeting">Enter Name Of The Meeting</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="choose_start_time">Choose Start Time</string>
+    <string name="choose_end_time">CHOOSE END TIME</string>
 </resources>

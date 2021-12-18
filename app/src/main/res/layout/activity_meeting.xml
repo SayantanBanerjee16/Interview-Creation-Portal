@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MeetingActivity">
+
+    <TextView
+        android:id="@+id/displayView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/nova_mono"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/add_a_new_meeting"
+        android:textColor="@color/purple_700"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/nameOfMeeting"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_name_of_meeting"
+        android:padding="16dp"
+        app:endIconMode="clear_text"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/displayView"
+        app:startIconDrawable="@drawable/ic_baseline_emoji_people_24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.bartbergmans.gradientbutton.views.GradientButton
+        android:id="@+id/chooseDatePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:padding="16dp"
+        android:text="@string/choose_date"
+        app:end_color="@color/gradientEnd"
+        app:fill_color="@color/fillColor"
+        app:filled="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameOfMeeting"
+        app:orientation="top_bottom"
+        app:start_color="@color/gradientStart"
+        app:stroke="3dp" />
+
+
+    <com.bartbergmans.gradientbutton.views.GradientButton
+        android:id="@+id/chooseStartTimePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:padding="16dp"
+        android:text="@string/choose_start_time"
+        app:end_color="@color/gradientEnd"
+        app:fill_color="@color/fillColor"
+        app:filled="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chooseDatePicker"
+        app:orientation="top_bottom"
+        app:start_color="@color/gradientStart"
+        app:stroke="3dp" />
+
+    <com.bartbergmans.gradientbutton.views.GradientButton
+        android:id="@+id/chooseEndTimePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:padding="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/choose_end_time"
+        app:end_color="@color/gradientEnd"
+        app:fill_color="@color/fillColor"
+        app:filled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chooseDatePicker"
+        app:orientation="top_bottom"
+        app:start_color="@color/gradientStart"
+        app:stroke="3dp" />
+
+    <com.bartbergmans.gradientbutton.views.GradientButton
+        android:id="@+id/addUserButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:padding="16dp"
+        android:text="@string/add_a_new_meeting"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:end_color="@color/gradientEnd"
+        app:filled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:orientation="top_bottom"
+        app:start_color="@color/gradientStart"
+        app:stroke="3dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
