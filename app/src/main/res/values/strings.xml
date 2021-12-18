@@ -19,4 +19,7 @@
     <string name="choose_end_time">CHOOSE END TIME</string>
     <string name="meeting">meeting</string>
     <string name="meeting_uploaded_to_firebase">Meeting Uploaded To Firebase</string>
+    <string name="meeting_name">Meeting Name</string>
+    <string name="end_time">End Time</string>
+    <string name="start_time">Start Time</string>
 </resources>

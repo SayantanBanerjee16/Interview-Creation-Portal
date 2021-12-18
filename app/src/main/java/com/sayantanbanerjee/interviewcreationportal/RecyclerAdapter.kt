@@ -20,6 +20,9 @@ class RecyclerAdapter(private val context: Context, private val meetings: List<M
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val meeting = meetings[position]
         holder.meetingRoomName.text = meeting.name
+     //   new java.util.Date(Long.parseLong(timeInMillis))
+        holder.timeStampStart.text = meeting.slot.startStamp
+        holder.timeStampEnd.text = meeting.slot.endStamp
     }
 
     override fun getItemCount(): Int {
@@ -28,5 +31,8 @@ class RecyclerAdapter(private val context: Context, private val meetings: List<M
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val meetingRoomName = view.findViewById<TextView>(R.id.meetingRoomName)!!
+        val timeStampStart = view.findViewById<TextView>(R.id.timestampStart)!!
+        val timeStampEnd = view.findViewById<TextView>(R.id.timeStampEnd)!!
+
     }
 }
