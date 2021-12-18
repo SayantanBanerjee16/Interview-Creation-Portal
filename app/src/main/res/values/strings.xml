@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Interview Creation Portal</string>
-    <string name="meeting">meeting</string>
     <string name="users">users</string>
     <string name="interview_creation_portal">INTERVIEW CREATION PORTAL</string>
     <string name="add_user">ADD USER</string>
@@ -18,4 +17,6 @@
     <string name="choose_date">Choose Date</string>
     <string name="choose_start_time">Choose Start Time</string>
     <string name="choose_end_time">CHOOSE END TIME</string>
+    <string name="meeting">meeting</string>
+    <string name="meeting_uploaded_to_firebase">Meeting Uploaded To Firebase</string>
 </resources>

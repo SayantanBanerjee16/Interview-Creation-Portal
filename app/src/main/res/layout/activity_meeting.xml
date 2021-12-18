@@ -101,7 +101,7 @@
         app:stroke="3dp" />
 
     <com.bartbergmans.gradientbutton.views.GradientButton
-        android:id="@+id/addUserButton"
+        android:id="@+id/addMeetingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
