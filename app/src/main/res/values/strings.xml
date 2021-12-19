@@ -28,4 +28,7 @@
     <string name="user_name">User Name</string>
     <string name="slots">slots</string>
     <string name="collision_found">Collision of timeslots detected!</string>
+    <string name="display_meeting">DISPLAY OF A MEETING</string>
+    <string name="update_meeting">Update Meeting</string>
+    <string name="delete_meeting">DELETE MEETING</string>
 </resources>

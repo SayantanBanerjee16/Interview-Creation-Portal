@@ -2,6 +2,8 @@ package com.sayantanbanerjee.interviewcreationportal
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +22,13 @@ class MeetingAdapter(private val context: Context, private val meetings: List<Me
         //return ViewHolder(view)
         return ViewHolder(view).listen { pos, type ->
             val item = meetings[pos]
-            Toast.makeText(context, item.toString(), Toast.LENGTH_LONG).show()
+            val intent = Intent(context, DisplayActivity::class.java)
+            intent.putExtra("MEETING_ID", item.id)
+            intent.putExtra("MEETING_NAME", item.name)
+            intent.putExtra("MEETING_START_TIME", item.slot.startStamp)
+            intent.putExtra("MEETING_END_TIME", item.slot.endStamp)
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
         }
     }
 
