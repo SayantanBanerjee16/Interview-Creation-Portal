@@ -54,6 +54,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     var endMinute = -1
     var timeStampStart = ""
     var timeStampEnd = ""
+    var selectedUserList: MutableList<User> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,6 +138,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                     FirebaseConnections.uploadMeetingToFirebase(
                         this,
                         nameOfMeeting,
+                        selectedUserList,
                         timeStampStart,
                         timeStampEnd
                     )
@@ -164,6 +166,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
     }
 
+    // This function is run to fetch the user list from the server.
     private fun fetchUsersList() {
         val reference = Firebase.database.reference
         reference.child(getString(R.string.users)).addListenerForSingleValueEvent(
@@ -196,6 +199,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             })
     }
 
+    // Dialog to display all the users list to choose from.
     private fun dialog(usersNameList: MutableList<String>, usersList: List<User>) {
         LovelyChoiceDialog(this)
             .setTopColorRes(R.color.darkRed)
@@ -204,7 +208,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             .setItemsMultiChoice(
                 usersNameList
             ) { positions, items ->
-                val selectedUserList: MutableList<User> = mutableListOf()
+                selectedUserList.clear()
                 for (pos in positions) {
                     selectedUserList.add(usersList.get(pos))
                 }
@@ -240,6 +244,15 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             Toast.makeText(
                 this,
                 "Recheck all Date and Time fields!",
+                Toast.LENGTH_LONG
+            ).show()
+            return false
+        }
+
+        if(selectedUserList.size <= 1){
+            Toast.makeText(
+                this,
+                "Minimum participants allowed is Two!",
                 Toast.LENGTH_LONG
             ).show()
             return false

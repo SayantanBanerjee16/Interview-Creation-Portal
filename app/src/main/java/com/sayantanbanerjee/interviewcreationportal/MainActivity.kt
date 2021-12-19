@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addUserButton: FloatingActionButton
     private lateinit var addMeetingButton: FloatingActionButton
     private lateinit var adapter: MeetingAdapter
-    private lateinit var recyclerList : RecyclerView
+    private lateinit var recyclerList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +46,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
         if (NetworkConnectivity.isNetworkAvailable(this))
             fetchMeetingList()
-
     }
 
     private fun fetchMeetingList() {

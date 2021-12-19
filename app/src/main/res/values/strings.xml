@@ -26,4 +26,5 @@
     <string name="selectContact">Select Users From the List</string>
     <string name="confirm">Confirm</string>
     <string name="user_name">User Name</string>
+    <string name="slots">slots</string>
 </resources>

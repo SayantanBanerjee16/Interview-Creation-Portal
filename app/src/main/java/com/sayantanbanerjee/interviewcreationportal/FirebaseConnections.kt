@@ -32,6 +32,7 @@ class FirebaseConnections {
         fun uploadMeetingToFirebase(
             context: Context,
             meetingName: String,
+            selectedUserList : List<User>,
             timestampStart: String,
             timestampEnd: String
         ) {
@@ -41,6 +42,11 @@ class FirebaseConnections {
             val meeting = Meeting(meetingId, meetingName, Slot(timestampStart, timestampEnd))
             // Upload meeting class to firebase
             reference.child(context.getString(R.string.meeting)).child(meetingId).setValue(meeting)
+            for(users in selectedUserList){
+                reference.child(context.getString(R.string.meeting)).child(meetingId).child(context.getString(R.string.users)).child(users.id).child("UID").setValue(users.id)
+                val slot : Slot = Slot(timestampStart, timestampEnd)
+                reference.child(context.getString(R.string.users)).child(users.id).child(context.getString(R.string.slots)).child(timestampStart).setValue(slot)
+            }
             // Display Toast to user
             Toast.makeText(
                 context, context.getString(R.string.meeting_uploaded_to_firebase), Toast.LENGTH_LONG
