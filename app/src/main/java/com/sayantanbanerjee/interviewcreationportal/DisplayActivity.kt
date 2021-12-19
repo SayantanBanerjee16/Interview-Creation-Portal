@@ -1,11 +1,14 @@
 package com.sayantanbanerjee.interviewcreationportal
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
@@ -13,10 +16,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.sayantanbanerjee.interviewcreationportal.data.Meeting
-import com.sayantanbanerjee.interviewcreationportal.data.Slot
 import com.sayantanbanerjee.interviewcreationportal.data.User
+import com.yarolegovich.lovelydialog.LovelyStandardDialog
 import java.text.SimpleDateFormat
+
 
 class DisplayActivity : AppCompatActivity() {
 
@@ -27,6 +30,8 @@ class DisplayActivity : AppCompatActivity() {
     private lateinit var editButton: Button
     private lateinit var deleteButton: Button
     private lateinit var adapter: UserAdapter
+
+    private lateinit var selectedUserList: MutableList<User>
 
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +44,6 @@ class DisplayActivity : AppCompatActivity() {
         usersInDisplayList = findViewById(R.id.usersInDisplayList)
         editButton = findViewById(R.id.editMeetingButton)
         deleteButton = findViewById(R.id.deleteMeetingButton)
-
 
         val intent = intent
         val meetingId = intent.getStringExtra("MEETING_ID")
@@ -57,6 +61,44 @@ class DisplayActivity : AppCompatActivity() {
 
         if (NetworkConnectivity.isNetworkAvailable(this))
             meetingId?.let { fetchUserList(it) }
+
+        deleteButton.setOnClickListener {
+            LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                .setTopColorRes(R.color.indigo)
+                .setButtonsColorRes(R.color.darkDeepOrange)
+                .setIcon(R.drawable.ic_baseline_delete_forever_24)
+                .setTitle(R.string.delete_title)
+                .setMessage(R.string.delete_heading)
+                .setPositiveButton(
+                    R.string.ok,
+                    View.OnClickListener {
+                        if (NetworkConnectivity.isNetworkAvailable(this)) {
+                            meetingId?.let { meetingId ->
+                                FirebaseConnections.deleteMeeting(
+                                    applicationContext,
+                                    meetingId, selectedUserList, meetingStartTime
+                                )
+                            }
+                            Toast.makeText(
+                                applicationContext,
+                                "Meeting successfully deleted!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                // close the activity after 0.5 second
+                                finish()
+                            }, 500)
+                        } else {
+                            Toast.makeText(
+                                applicationContext,
+                                "No Network Present. Aborting!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    })
+                .show()
+        }
     }
 
     private fun fetchUserList(meetingID: String) {
@@ -69,15 +111,17 @@ class DisplayActivity : AppCompatActivity() {
                         if (snapshot.exists()) {
                             val usersList: MutableList<User> = mutableListOf()
                             for (dataSnapshot in snapshot.children) {
-                                val id = dataSnapshot.child("id").value.toString()
+                                val id = dataSnapshot.child("UID").value.toString()
                                 val name = dataSnapshot.child("name").value.toString()
                                 val currentUser =
                                     User(id, name, "")
                                 usersList.add(currentUser)
                             }
 
+                            selectedUserList = usersList
+
                             adapter =
-                                UserAdapter(applicationContext, usersList)
+                                UserAdapter(applicationContext, selectedUserList)
                             usersInDisplayList.adapter = adapter
                             usersInDisplayList.layoutManager =
                                 LinearLayoutManager(applicationContext)

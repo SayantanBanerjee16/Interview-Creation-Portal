@@ -1,6 +1,7 @@
 package com.sayantanbanerjee.interviewcreationportal
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -32,7 +33,7 @@ class FirebaseConnections {
         fun uploadMeetingToFirebase(
             context: Context,
             meetingName: String,
-            selectedUserList : List<User>,
+            selectedUserList: List<User>,
             timestampStart: String,
             timestampEnd: String
         ) {
@@ -42,16 +43,35 @@ class FirebaseConnections {
             val meeting = Meeting(meetingId, meetingName, Slot(timestampStart, timestampEnd))
             // Upload meeting class to firebase
             reference.child(context.getString(R.string.meeting)).child(meetingId).setValue(meeting)
-            for(users in selectedUserList){
-                reference.child(context.getString(R.string.meeting)).child(meetingId).child(context.getString(R.string.users)).child(users.id).child("UID").setValue(users.id)
-                reference.child(context.getString(R.string.meeting)).child(meetingId).child(context.getString(R.string.users)).child(users.id).child("name").setValue(users.name)
-                val slot : Slot = Slot(timestampStart, timestampEnd)
-                reference.child(context.getString(R.string.users)).child(users.id).child(context.getString(R.string.slots)).child(timestampStart).setValue(slot)
+            for (users in selectedUserList) {
+                reference.child(context.getString(R.string.meeting)).child(meetingId)
+                    .child(context.getString(R.string.users)).child(users.id).child("UID")
+                    .setValue(users.id)
+                reference.child(context.getString(R.string.meeting)).child(meetingId)
+                    .child(context.getString(R.string.users)).child(users.id).child("name")
+                    .setValue(users.name)
+                val slot: Slot = Slot(timestampStart, timestampEnd)
+                reference.child(context.getString(R.string.users)).child(users.id)
+                    .child(context.getString(R.string.slots)).child(timestampStart).setValue(slot)
             }
             // Display Toast to user
             Toast.makeText(
                 context, context.getString(R.string.meeting_uploaded_to_firebase), Toast.LENGTH_LONG
             ).show()
+        }
+
+        fun deleteMeeting(
+            context: Context,
+            meetingId: String,
+            selectedUserList: List<User>,
+            startTimestamp: String
+        ) {
+            val reference = Firebase.database.reference
+            reference.child(context.getString(R.string.meeting)).child(meetingId).removeValue()
+            for (users in selectedUserList) {
+                reference.child(context.getString(R.string.users)).child(users.id)
+                    .child(context.getString(R.string.slots)).child(startTimestamp).removeValue()
+            }
         }
 
     }

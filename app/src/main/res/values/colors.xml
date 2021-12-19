@@ -14,4 +14,6 @@
     <color name="background">#83DCC4C2</color>
     <color name="pink">#BE9D9A</color>
     <color name="darkRed">#F44336</color>
+    <color name="indigo">#661599</color>
+    <color name="darkDeepOrange">#B31004</color>
 </resources>

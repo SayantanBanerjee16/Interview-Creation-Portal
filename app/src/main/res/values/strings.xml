@@ -31,4 +31,7 @@
     <string name="display_meeting">DISPLAY OF A MEETING</string>
     <string name="update_meeting">Update Meeting</string>
     <string name="delete_meeting">DELETE MEETING</string>
+    <string name="delete_title">Are you sure you want to Delete it?</string>
+    <string name="delete_heading">Once deleted, this action cannot be undone.</string>
+    <string name="ok">OK</string>
 </resources>
