@@ -9,7 +9,7 @@ Created an interiew scheduling portal, where there is option to add new user, an
 ## Usage
 For installation and usage of this application
 
-Navigate to: /APK/Interview Portal - Sayantan Banerjee.apk and install it in your android phones. <Recommended Android 6.0(M) version and above>
+Navigate to: <a href="https://github.com/SayantanBanerjee16/Interview-Creation-Portal/tree/main/APK"> **/APK/Interview Portal - Sayantan Banerjee.apk** </a> and install it in your android phones. <Recommended Android 6.0(M) version and above>
 
 ## Application details
 
