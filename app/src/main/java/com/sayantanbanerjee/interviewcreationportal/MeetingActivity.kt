@@ -21,8 +21,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.sayantanbanerjee.interviewcreationportal.data.User
+import com.sayantanbanerjee.interviewcreationportal.data.UserSlot
 import com.yarolegovich.lovelydialog.LovelyChoiceDialog
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -55,6 +57,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     var timeStampStart = ""
     var timeStampEnd = ""
     var selectedUserList: MutableList<User> = mutableListOf()
+    var userTimeSlots: MutableList<UserSlot> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,20 +135,27 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         addMeetingButton.setOnClickListener {
             if (validationOfFields()) {
                 if (NetworkConnectivity.isNetworkAvailable(this)) {
-                    // If network connectivity present, then update the meeting to server.
-                    val nameOfMeeting = meetingName.editText?.text.toString()
+                    // If network connectivity present, first check if any of the contact gets collided with the given timestamp.
                     parseDateTimeToTimeStamp()
-                    FirebaseConnections.uploadMeetingToFirebase(
-                        this,
-                        nameOfMeeting,
-                        selectedUserList,
-                        timeStampStart,
-                        timeStampEnd
-                    )
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        // close the activity after 0.5 second
-                        finish()
-                    }, 500)
+                    if (!collisionCheck(selectedUserList)) {
+                        // If no collision present, you are good to go.
+                        val nameOfMeeting = meetingName.editText?.text.toString()
+                        FirebaseConnections.uploadMeetingToFirebase(
+                            this,
+                            nameOfMeeting,
+                            selectedUserList,
+                            timeStampStart,
+                            timeStampEnd
+                        )
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            // close the activity after 0.5 second
+                            finish()
+                        }, 500)
+                    } else {
+                        Toast.makeText(this, getString(R.string.collision_found), Toast.LENGTH_LONG)
+                            .show()
+                    }
+
                 } else {
                     Toast.makeText(this, getString(R.string.no_network), Toast.LENGTH_LONG).show()
                 }
@@ -166,8 +176,28 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
     }
 
+    private fun collisionCheck(selectedUserList: MutableList<User>): Boolean {
+        val setsOfChosenID = mutableSetOf<String>()
+        for (users in selectedUserList) {
+            setsOfChosenID.add(users.id)
+        }
+        val meetingStart = timeStampStart.toLong()
+        val meetingEnd = timeStampEnd.toLong()
+        for (timeSlots in userTimeSlots) {
+            if (setsOfChosenID.contains(timeSlots.id)) {
+                val slotStart = timeSlots.startStamp.toLong()
+                val slotEnd = timeSlots.endStamp.toLong()
+                if (!(meetingEnd < slotStart || meetingStart > slotEnd)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     // This function is run to fetch the user list from the server.
     private fun fetchUsersList() {
+        userTimeSlots.clear()
         val reference = Firebase.database.reference
         reference.child(getString(R.string.users)).addListenerForSingleValueEvent(
             object : ValueEventListener {
@@ -177,7 +207,6 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                         val usersList: MutableList<User> = mutableListOf()
                         val usersNameList: MutableList<String> = mutableListOf()
                         for (dataSnapshot in snapshot.children) {
-                            Log.i("###", dataSnapshot.toString())
                             val id = dataSnapshot.child("id").value.toString()
                             val name = dataSnapshot.child("name").value.toString()
                             val email = dataSnapshot.child("email").value.toString()
@@ -185,10 +214,17 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                                 User(id, name, email)
                             usersList.add(currentUser)
                             usersNameList.add(name)
+
+                            for (timeSnapshot in dataSnapshot.child("slots").children) {
+                                val start = timeSnapshot.child("startStamp").value.toString()
+                                val end = timeSnapshot.child("endStamp").value.toString()
+                                val userSlot = UserSlot(id, start, end)
+                                userTimeSlots.add(userSlot)
+                            }
+
                         }
 
                         dialog(usersNameList, usersList)
-
 
                     }
                 }
@@ -249,7 +285,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             return false
         }
 
-        if(selectedUserList.size <= 1){
+        if (selectedUserList.size <= 1) {
             Toast.makeText(
                 this,
                 "Minimum participants allowed is Two!",
@@ -286,7 +322,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     }
 
     @SuppressLint("SetTextI18n")
-    // Setting of the chosen time from the time picker dialog
+// Setting of the chosen time from the time picker dialog
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         val timeText: String = "$hourOfDay : $minute"
         if (startTimeClicked) {

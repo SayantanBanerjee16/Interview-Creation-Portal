@@ -27,4 +27,5 @@
     <string name="confirm">Confirm</string>
     <string name="user_name">User Name</string>
     <string name="slots">slots</string>
+    <string name="collision_found">Collision of timeslots detected!</string>
 </resources>
