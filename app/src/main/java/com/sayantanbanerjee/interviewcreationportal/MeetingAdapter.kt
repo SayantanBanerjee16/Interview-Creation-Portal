@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.sayantanbanerjee.interviewcreationportal.data.Meeting
 import java.text.SimpleDateFormat
@@ -16,7 +17,11 @@ class MeetingAdapter(private val context: Context, private val meetings: List<Me
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context)
             .inflate(R.layout.item_meeting, parent, false)
-        return ViewHolder(view)
+        //return ViewHolder(view)
+        return ViewHolder(view).listen { pos, type ->
+            val item = meetings[pos]
+            Toast.makeText(context, item.toString(), Toast.LENGTH_LONG).show()
+        }
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -25,11 +30,10 @@ class MeetingAdapter(private val context: Context, private val meetings: List<Me
         holder.meetingRoomName.text = meeting.name
 
         val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy, hh.mm aa")
-
-        val convertedStartDate = simpleDateFormat.format((meeting.slot.startStamp.toLong() * 1000))
+        val convertedStartDate = simpleDateFormat.format(meeting.slot.startStamp.toLong())
         holder.timeStampStart.text = convertedStartDate.toString()
 
-        val convertedEndDate = simpleDateFormat.format((meeting.slot.endStamp.toLong() * 1000))
+        val convertedEndDate = simpleDateFormat.format(meeting.slot.endStamp.toLong())
         holder.timeStampEnd.text = convertedEndDate.toString()
     }
 
@@ -42,5 +46,12 @@ class MeetingAdapter(private val context: Context, private val meetings: List<Me
         val timeStampStart = view.findViewById<TextView>(R.id.timestampStart)!!
         val timeStampEnd = view.findViewById<TextView>(R.id.timeStampEnd)!!
 
+    }
+
+    fun <T : RecyclerView.ViewHolder> T.listen(event: (position: Int, type: Int) -> Unit): T {
+        itemView.setOnClickListener {
+            event.invoke(adapterPosition, itemViewType)
+        }
+        return this
     }
 }
