@@ -34,4 +34,6 @@
     <string name="delete_title">Are you sure you want to Delete it?</string>
     <string name="delete_heading">Once deleted, this action cannot be undone.</string>
     <string name="ok">OK</string>
+    <string name="UPDATE_A_MEETING">UPDATE A MEETING</string>
+    <string name="UPDATE_MEETING">UPDATE MEETING</string>
 </resources>

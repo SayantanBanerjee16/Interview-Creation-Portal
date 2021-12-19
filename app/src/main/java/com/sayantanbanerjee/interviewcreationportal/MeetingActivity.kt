@@ -9,10 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.TimePicker
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +23,7 @@ import com.google.firebase.ktx.Firebase
 import com.sayantanbanerjee.interviewcreationportal.data.User
 import com.sayantanbanerjee.interviewcreationportal.data.UserSlot
 import com.yarolegovich.lovelydialog.LovelyChoiceDialog
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -44,9 +42,10 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     private lateinit var addUserToTheMeeting: Button
     private lateinit var adapter: UserAdapter
     private lateinit var recyclerList: RecyclerView
+    private lateinit var insertOrUpdateDisplay: TextView
 
     // Initialize all the variables which holds date and time
-    var startTimeClicked: Boolean = false
+    private var startTimeClicked: Boolean = false
     var dayChosen = -1
     var monthChosen = -1
     var yearChosen = -1
@@ -58,6 +57,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     var timeStampEnd = ""
     var selectedUserList: MutableList<User> = mutableListOf()
     var userTimeSlots: MutableList<UserSlot> = mutableListOf()
+    var isUpdate = false
+    private var meetingId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +71,18 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         addUserToTheMeeting = findViewById(R.id.addUserToMeetingButton)
         recyclerList =
             findViewById<RecyclerView>(R.id.usersInInterview) as RecyclerView
+        insertOrUpdateDisplay = findViewById(R.id.insertOrUpdateDisplay)
+
+        val intent = intent
+        val isEditingVersion = intent.getBooleanExtra("EDIT", false)
+        if (isEditingVersion) {
+            isUpdate = true
+            meetingId = intent.getStringExtra("MEETING_ID").toString()
+            val meetingName = intent.getStringExtra("MEETING_NAME")
+            val meetingStartTime = intent.getStringExtra("MEETING_START_TIME")
+            val meetingEndTime = intent.getStringExtra("MEETING_END_TIME")
+            updateViewModify(meetingName!!, meetingStartTime!!, meetingEndTime!!)
+        }
 
         // Code to choose the date from date picker dialog.
         chooseDateButton.setOnClickListener {
@@ -173,6 +186,67 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
 
         }
+
+    }
+
+    @SuppressLint("SimpleDateFormat", "SetTextI18n")
+    private fun updateViewModify(name: String, meetingStartTime: String, meetingEndTime: String) {
+        addMeetingButton.text = getString(R.string.UPDATE_MEETING)
+        insertOrUpdateDisplay.text = getString(R.string.UPDATE_A_MEETING)
+        meetingName.editText?.setText(name)
+        val dayFormat = SimpleDateFormat("dd")
+        dayChosen = dayFormat.format(meetingStartTime.toLong() * 1000L).toInt()
+        val monthFormat = SimpleDateFormat("MM")
+        monthChosen = monthFormat.format(meetingStartTime.toLong() * 1000L).toInt()
+        val yearFormat = SimpleDateFormat("yyyy")
+        yearChosen = yearFormat.format(meetingStartTime.toLong() * 1000L).toInt()
+        val hourFormat = SimpleDateFormat("HH")
+        startHour = hourFormat.format(meetingStartTime.toLong() * 1000L).toInt()
+        endHour = hourFormat.format(meetingEndTime.toLong() * 1000L).toInt()
+        val minuteFormat = SimpleDateFormat("mm")
+        startMinute = minuteFormat.format(meetingStartTime.toLong() * 1000L).toInt()
+        endMinute = minuteFormat.format(meetingEndTime.toLong() * 1000L).toInt()
+        val dateText: String = "DATE : $dayChosen  /  $monthChosen  /  $yearChosen"
+        chooseDateButton.text = dateText
+        val startTimeText: String = "$startHour : $startMinute"
+        chooseStartTimeButton.text = "START : $startTimeText"
+        val endTimeText: String = "$endHour : $endMinute"
+        chooseEndTimeButton.text = "END : $endTimeText"
+        fetchUserList(meetingId)
+    }
+
+    private fun fetchUserList(meetingID: String) {
+
+        val reference = Firebase.database.reference
+        reference.child(getString(R.string.meeting)).child(meetingID).child("users")
+            .addListenerForSingleValueEvent(
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            val usersList: MutableList<User> = mutableListOf()
+                            for (dataSnapshot in snapshot.children) {
+                                val id = dataSnapshot.child("UID").value.toString()
+                                val name = dataSnapshot.child("name").value.toString()
+                                val currentUser =
+                                    User(id, name, "")
+                                usersList.add(currentUser)
+                            }
+
+                            selectedUserList = usersList
+
+                            adapter =
+                                UserAdapter(applicationContext, selectedUserList)
+                            recyclerList.adapter = adapter
+                            recyclerList.layoutManager = LinearLayoutManager(applicationContext)
+
+
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
 
     }
 

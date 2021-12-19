@@ -7,7 +7,7 @@
     tools:context=".MeetingActivity">
 
     <TextView
-        android:id="@+id/displayView"
+        android:id="@+id/insertOrUpdateDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -34,7 +34,7 @@
         app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/displayView"
+        app:layout_constraintTop_toBottomOf="@id/insertOrUpdateDisplay"
         app:startIconDrawable="@drawable/ic_baseline_emoji_people_24">
 
         <com.google.android.material.textfield.TextInputEditText

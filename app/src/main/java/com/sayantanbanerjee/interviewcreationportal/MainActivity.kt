@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         addMeetingButton = findViewById(R.id.fabAddMeeting)
         addMeetingButton.setOnClickListener {
             val intent = Intent(this, MeetingActivity::class.java)
+            intent.putExtra("EDIT", false)
             startActivity(intent)
         }
 

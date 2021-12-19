@@ -63,6 +63,17 @@ class DisplayActivity : AppCompatActivity() {
         if (NetworkConnectivity.isNetworkAvailable(this))
             meetingId?.let { fetchUserList(it) }
 
+        editButton.setOnClickListener {
+            val intent = Intent(this, MeetingActivity::class.java)
+            intent.putExtra("EDIT", true)
+            intent.putExtra("MEETING_ID", meetingId)
+            intent.putExtra("MEETING_NAME", meetingName)
+            intent.putExtra("MEETING_START_TIME", meetingStartTime)
+            intent.putExtra("MEETING_END_TIME", meetingEndTime)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+
         deleteButton.setOnClickListener {
             LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
                 .setTopColorRes(R.color.indigo)
@@ -87,8 +98,10 @@ class DisplayActivity : AppCompatActivity() {
                             ).show()
                             Handler(Looper.getMainLooper()).postDelayed({
                                 // close the activity after 0.5 second
-                                val mainActivityIntent = Intent(applicationContext, MainActivity::class.java)
-                                mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                val mainActivityIntent =
+                                    Intent(applicationContext, MainActivity::class.java)
+                                mainActivityIntent.flags =
+                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(mainActivityIntent)
                                 finishAndRemoveTask()
                             }, 500)

@@ -23,6 +23,7 @@ class MeetingAdapter(private val context: Context, private val meetings: List<Me
         return ViewHolder(view).listen { pos, type ->
             val item = meetings[pos]
             val intent = Intent(context, DisplayActivity::class.java)
+            intent.putExtra("EDIT", true)
             intent.putExtra("MEETING_ID", item.id)
             intent.putExtra("MEETING_NAME", item.name)
             intent.putExtra("MEETING_START_TIME", item.slot.startStamp)
