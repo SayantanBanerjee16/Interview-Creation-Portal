@@ -13,15 +13,15 @@ Navigate to: <a href="https://github.com/SayantanBanerjee16/Interview-Creation-P
 
 ## Application details
 
-* This is the home screen of the application which displays all the scheduled interviews along with start time and end time. Clicking on it displays the interview in deatil. There are also two floating action button, one for adding a new user, another for adding a new meeting.
+* This is the home screen of the application which displays all the scheduled interviews along with start time and end time. Clicking on it displays the interview in detail. There are also two floating action button, one for adding a new user, another for adding a new meeting.
 
 <img src="screenshots/HomeScreen.jpg" width="200" height ="400">
 
-* Upon clicking the add user screen floating action button from the home page, the below screen appears where we can add a new user in the server database. The fields are name and email. Appropraite validations are performed.
+* Upon clicking the add user screen floating action button from the home page, the below screen appears where we can add a new user in the server database. The fields are name and email. Appropriate validations are performed.
 
 <img src="screenshots/AddUserScreen.jpg" width="200" height ="400">
 
-* Upon clicking the add a new meeting floating action button from the home page, the below screen appears where we can schedule a new meeting in the server database, by selecting date and start time and end time, and also participants from the total participant list. Appropriate validations are checked like the participants time should not collide, no of participants must be greater than or equal to two. Validations are performed on date and time fields also.
+* Upon clicking the add a new meeting floating action button from the home page, the below screen appears where we can schedule a new meeting in the server database, by selecting date and start time and end time, and also participants from the total participant list, that we had added from Add User Screen. Appropriate validations are checked like the participants time should not collide, no of participants must be greater than or equal to two. Validations are performed on date and time fields also.
 
 <img src="screenshots/addone.jpg" width="200" height ="400"> <img src="screenshots/addtwo.jpg" width="200" height ="400">
 
