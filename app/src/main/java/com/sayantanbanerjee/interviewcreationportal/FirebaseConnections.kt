@@ -77,15 +77,14 @@ class FirebaseConnections {
         fun deleteMeetingWhileUpdating(
             context: Context,
             meetingId: String,
-            initialSelectedUsers: List<User>,
+            initialSelectedUsers: ArrayList<String>,
             startTimestamp: String
         ) {
             val reference = Firebase.database.reference
             reference.child(context.getString(R.string.meeting)).child(meetingId).removeValue()
             Log.i("####", startTimestamp)
-            for (users in initialSelectedUsers) {
-                Log.i("####", users.toString())
-                reference.child(context.getString(R.string.users)).child(users.id)
+            for (userId in initialSelectedUsers) {
+                reference.child(context.getString(R.string.users)).child(userId)
                     .child(context.getString(R.string.slots)).child(startTimestamp).removeValue()
             }
         }

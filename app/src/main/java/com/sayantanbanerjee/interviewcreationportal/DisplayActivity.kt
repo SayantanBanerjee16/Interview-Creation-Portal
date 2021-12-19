@@ -33,6 +33,7 @@ class DisplayActivity : AppCompatActivity() {
     private lateinit var adapter: UserAdapter
 
     private lateinit var selectedUserList: MutableList<User>
+    private var selectedUserId : ArrayList<String> = arrayListOf()
 
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +71,7 @@ class DisplayActivity : AppCompatActivity() {
             intent.putExtra("MEETING_NAME", meetingName)
             intent.putExtra("MEETING_START_TIME", meetingStartTime)
             intent.putExtra("MEETING_END_TIME", meetingEndTime)
+            intent.putStringArrayListExtra("USER_LIST_ID",selectedUserId)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
@@ -133,6 +135,7 @@ class DisplayActivity : AppCompatActivity() {
                                 val currentUser =
                                     User(id, name, "")
                                 usersList.add(currentUser)
+                                selectedUserId.add(id)
                             }
 
                             selectedUserList = usersList

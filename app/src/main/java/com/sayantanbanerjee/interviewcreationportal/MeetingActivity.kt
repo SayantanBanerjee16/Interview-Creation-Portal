@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 // This activity is responsible for creation / updation of a meeting.
@@ -62,6 +63,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     var meetingId = ""
     var initialStartTimestamp = ""
     var initialSelectedUsers: List<User> = emptyList()
+    private lateinit var initialSelectedId : ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +86,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             val meetingName = intent.getStringExtra("MEETING_NAME")
             val meetingStartTime = intent.getStringExtra("MEETING_START_TIME")
             val meetingEndTime = intent.getStringExtra("MEETING_END_TIME")
+            initialSelectedId = intent.getStringArrayListExtra("USER_LIST_ID")!!
+
             updateViewModify(meetingName!!, meetingStartTime!!, meetingEndTime!!)
         }
 
@@ -160,7 +164,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                             FirebaseConnections.deleteMeetingWhileUpdating(
                                 this,
                                 meetingId,
-                                initialSelectedUsers,
+                                initialSelectedId,
                                 initialStartTimestamp
                             )
                         }
@@ -280,8 +284,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         }
         val setsOfAlreadyRegisteredID = mutableSetOf<String>()
         if (isUpdate) {
-            for (users in initialSelectedUsers) {
-                setsOfAlreadyRegisteredID.add(users.id)
+            for (userId in initialSelectedId) {
+                setsOfAlreadyRegisteredID.add(userId)
             }
         }
 
