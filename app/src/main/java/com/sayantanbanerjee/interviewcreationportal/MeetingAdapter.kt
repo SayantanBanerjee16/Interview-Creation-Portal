@@ -30,10 +30,10 @@ class MeetingAdapter(private val context: Context, private val meetings: List<Me
         holder.meetingRoomName.text = meeting.name
 
         val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy, hh.mm aa")
-        val convertedStartDate = simpleDateFormat.format(meeting.slot.startStamp.toLong())
+        val convertedStartDate = simpleDateFormat.format(meeting.slot.startStamp.toLong() * 1000L)
         holder.timeStampStart.text = convertedStartDate.toString()
 
-        val convertedEndDate = simpleDateFormat.format(meeting.slot.endStamp.toLong())
+        val convertedEndDate = simpleDateFormat.format(meeting.slot.endStamp.toLong() * 1000L)
         holder.timeStampEnd.text = convertedEndDate.toString()
     }
 
