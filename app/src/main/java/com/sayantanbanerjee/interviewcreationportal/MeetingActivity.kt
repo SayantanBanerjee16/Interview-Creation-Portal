@@ -361,7 +361,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         val calenderCurrent = Calendar.getInstance()
         val currentYear = calenderCurrent.get(Calendar.YEAR)
-        val currentMonth = calenderCurrent.get(Calendar.MONTH)
+        var currentMonth = calenderCurrent.get(Calendar.MONTH)
+        currentMonth++
         val currentDay = calenderCurrent.get(Calendar.DAY_OF_MONTH)
         if (yearChosen < currentYear || (yearChosen == currentYear && monthChosen < currentMonth) || (yearChosen == currentYear && monthChosen == currentMonth && dayChosen < currentDay)) {
             Toast.makeText(
@@ -456,17 +457,26 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             } else {
                 val calenderCurrent = Calendar.getInstance()
                 val currentYear = calenderCurrent.get(Calendar.YEAR)
-                val currentMonth = calenderCurrent.get(Calendar.MONTH)
+                var currentMonth = calenderCurrent.get(Calendar.MONTH)
+                currentMonth++
                 val currentDay = calenderCurrent.get(Calendar.DAY_OF_MONTH)
                 val hourCurrent = calenderCurrent.get(Calendar.HOUR_OF_DAY)
                 val minuteCurrent = calenderCurrent.get(Calendar.MINUTE)
-                if ((yearChosen == currentYear && monthChosen == currentMonth && dayChosen == currentDay) && (hourOfDay < hourCurrent || (hourCurrent == hourOfDay && minute < minuteCurrent))) {
-                    Toast.makeText(
-                        this,
-                        "Start Time cannot be lesser than Current Time!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
+                Log.i("#######", "$currentDay / $currentMonth / $currentYear -- $hourCurrent : $minuteCurrent ---- $hourOfDay : $minute")
+                if(yearChosen == currentYear && monthChosen == currentMonth && dayChosen == currentDay){
+                    if (hourOfDay < hourCurrent || (hourCurrent == hourOfDay && minute < minuteCurrent)) {
+                        Log.i("#######", "INSIDE")
+                        Toast.makeText(
+                            this,
+                            "Start Time cannot be lesser than Current Time!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        startHour = hourOfDay
+                        startMinute = minute
+                        chooseStartTimeButton.text = "START : $timeText"
+                    }
+                }else{
                     startHour = hourOfDay
                     startMinute = minute
                     chooseStartTimeButton.text = "START : $timeText"
