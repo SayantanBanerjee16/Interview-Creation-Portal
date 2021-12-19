@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity() {
 
                         val meetingRooms: MutableList<Meeting> = mutableListOf()
                         for (dataSnapshot in snapshot.children) {
-                            Log.i("###", dataSnapshot.toString())
                             val id = dataSnapshot.child("id").value.toString()
                             val name = dataSnapshot.child("name").value.toString()
                             val startTimestamp =

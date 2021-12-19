@@ -289,7 +289,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         val currentYear = calenderCurrent.get(Calendar.YEAR)
         val currentMonth = calenderCurrent.get(Calendar.MONTH)
         val currentDay = calenderCurrent.get(Calendar.DAY_OF_MONTH)
-        if(yearChosen < currentYear || (yearChosen == currentYear && monthChosen < currentMonth) || (yearChosen == currentYear && monthChosen == currentMonth && dayChosen < currentDay)){
+        if (yearChosen < currentYear || (yearChosen == currentYear && monthChosen < currentMonth) || (yearChosen == currentYear && monthChosen == currentMonth && dayChosen < currentDay)) {
             Toast.makeText(
                 this,
                 "Start Date cannot be lesser than Current Date!",
@@ -300,13 +300,16 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         val hourCurrent = calenderCurrent.get(Calendar.HOUR_OF_DAY)
         val minuteCurrent = calenderCurrent.get(Calendar.MINUTE)
-        if(startHour < hourCurrent || (hourCurrent == startHour && startMinute < minuteCurrent)){
-            Toast.makeText(
-                this,
-                "Start Time cannot be lesser than Current Time!",
-                Toast.LENGTH_LONG
-            ).show()
+        if (yearChosen == currentYear && monthChosen == currentMonth && dayChosen == currentDay) {
+            if (startHour < hourCurrent || (hourCurrent == startHour && startMinute < minuteCurrent)) {
+                Toast.makeText(
+                    this,
+                    "Start Time cannot be lesser than Current Time!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
+
 
         if (selectedUserList.size <= 1) {
             Toast.makeText(
@@ -342,7 +345,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         val currentMonth = calenderCurrent.get(Calendar.MONTH)
         val currentDay = calenderCurrent.get(Calendar.DAY_OF_MONTH)
 
-        if(year < currentYear || (year == currentYear && month < currentMonth) || (year == currentYear && month == currentMonth && dayOfMonth < currentDay)){
+        if (year < currentYear || (year == currentYear && month < currentMonth) || (year == currentYear && month == currentMonth && dayOfMonth < currentDay)) {
             Toast.makeText(
                 this,
                 "Start Date cannot be lesser than Current Date!",
@@ -377,16 +380,19 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                     chooseStartTimeButton.text = "START : $timeText"
                 }
             } else {
-                val calenderTime = Calendar.getInstance()
-                val hourCurrent = calenderTime.get(Calendar.HOUR_OF_DAY)
-                val minuteCurrent = calenderTime.get(Calendar.MINUTE)
-                if(hourOfDay < hourCurrent || (hourCurrent == hourOfDay && minute < minuteCurrent)){
+                val calenderCurrent = Calendar.getInstance()
+                val currentYear = calenderCurrent.get(Calendar.YEAR)
+                val currentMonth = calenderCurrent.get(Calendar.MONTH)
+                val currentDay = calenderCurrent.get(Calendar.DAY_OF_MONTH)
+                val hourCurrent = calenderCurrent.get(Calendar.HOUR_OF_DAY)
+                val minuteCurrent = calenderCurrent.get(Calendar.MINUTE)
+                if ((yearChosen == currentYear && monthChosen == currentMonth && dayChosen == currentDay) && (hourOfDay < hourCurrent || (hourCurrent == hourOfDay && minute < minuteCurrent))) {
                     Toast.makeText(
                         this,
                         "Start Time cannot be lesser than Current Time!",
                         Toast.LENGTH_LONG
                     ).show()
-                }else{
+                } else {
                     startHour = hourOfDay
                     startMinute = minute
                     chooseStartTimeButton.text = "START : $timeText"

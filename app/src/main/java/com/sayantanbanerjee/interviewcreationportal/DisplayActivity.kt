@@ -1,6 +1,7 @@
 package com.sayantanbanerjee.interviewcreationportal
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -86,7 +87,10 @@ class DisplayActivity : AppCompatActivity() {
                             ).show()
                             Handler(Looper.getMainLooper()).postDelayed({
                                 // close the activity after 0.5 second
-                                finish()
+                                val mainActivityIntent = Intent(applicationContext, MainActivity::class.java)
+                                mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(mainActivityIntent)
+                                finishAndRemoveTask()
                             }, 500)
                         } else {
                             Toast.makeText(
