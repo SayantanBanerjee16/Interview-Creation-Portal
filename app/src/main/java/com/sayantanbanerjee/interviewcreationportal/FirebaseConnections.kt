@@ -44,6 +44,7 @@ class FirebaseConnections {
             reference.child(context.getString(R.string.meeting)).child(meetingId).setValue(meeting)
             for(users in selectedUserList){
                 reference.child(context.getString(R.string.meeting)).child(meetingId).child(context.getString(R.string.users)).child(users.id).child("UID").setValue(users.id)
+                reference.child(context.getString(R.string.meeting)).child(meetingId).child(context.getString(R.string.users)).child(users.id).child("name").setValue(users.name)
                 val slot : Slot = Slot(timestampStart, timestampEnd)
                 reference.child(context.getString(R.string.users)).child(users.id).child(context.getString(R.string.slots)).child(timestampStart).setValue(slot)
             }
