@@ -5,6 +5,7 @@ package com.sayantanbanerjee.interviewcreationportal
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -58,7 +59,9 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     var selectedUserList: MutableList<User> = mutableListOf()
     var userTimeSlots: MutableList<UserSlot> = mutableListOf()
     var isUpdate = false
-    private var meetingId = ""
+    var meetingId = ""
+    var initialStartTimestamp = ""
+    var initialSelectedUsers: List<User> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,6 +155,16 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                     parseDateTimeToTimeStamp()
                     if (!collisionCheck(selectedUserList)) {
                         // If no collision present, you are good to go.
+                        // If it is update, delete the previous stored info,
+                        if (isUpdate) {
+                            FirebaseConnections.deleteMeetingWhileUpdating(
+                                this,
+                                meetingId,
+                                initialSelectedUsers,
+                                initialStartTimestamp
+                            )
+                        }
+                        // Add the new info to the server
                         val nameOfMeeting = meetingName.editText?.text.toString()
                         FirebaseConnections.uploadMeetingToFirebase(
                             this,
@@ -160,9 +173,15 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                             timeStampStart,
                             timeStampEnd
                         )
+
                         Handler(Looper.getMainLooper()).postDelayed({
                             // close the activity after 0.5 second
-                            finish()
+                            val mainActivityIntent =
+                                Intent(applicationContext, MainActivity::class.java)
+                            mainActivityIntent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(mainActivityIntent)
+                            finishAndRemoveTask()
                         }, 500)
                     } else {
                         Toast.makeText(this, getString(R.string.collision_found), Toast.LENGTH_LONG)
@@ -194,6 +213,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         addMeetingButton.text = getString(R.string.UPDATE_MEETING)
         insertOrUpdateDisplay.text = getString(R.string.UPDATE_A_MEETING)
         meetingName.editText?.setText(name)
+        initialStartTimestamp = meetingStartTime
         val dayFormat = SimpleDateFormat("dd")
         dayChosen = dayFormat.format(meetingStartTime.toLong() * 1000L).toInt()
         val monthFormat = SimpleDateFormat("MM")
@@ -212,10 +232,10 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         chooseStartTimeButton.text = "START : $startTimeText"
         val endTimeText: String = "$endHour : $endMinute"
         chooseEndTimeButton.text = "END : $endTimeText"
-        fetchUserList(meetingId)
+        fetchInitialUserList(meetingId)
     }
 
-    private fun fetchUserList(meetingID: String) {
+    private fun fetchInitialUserList(meetingID: String) {
 
         val reference = Firebase.database.reference
         reference.child(getString(R.string.meeting)).child(meetingID).child("users")
@@ -233,6 +253,9 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                             }
 
                             selectedUserList = usersList
+                            initialSelectedUsers = usersList
+
+                            Log.i("######" , initialSelectedUsers.toString())
 
                             adapter =
                                 UserAdapter(applicationContext, selectedUserList)
@@ -255,9 +278,25 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         for (users in selectedUserList) {
             setsOfChosenID.add(users.id)
         }
+        val setsOfAlreadyRegisteredID = mutableSetOf<String>()
+        if (isUpdate) {
+            for (users in initialSelectedUsers) {
+                setsOfAlreadyRegisteredID.add(users.id)
+            }
+        }
+
         val meetingStart = timeStampStart.toLong()
         val meetingEnd = timeStampEnd.toLong()
         for (timeSlots in userTimeSlots) {
+            if (isUpdate) {
+                if (setsOfAlreadyRegisteredID.contains(timeSlots.id)) {
+                    val slotStart = timeSlots.startStamp
+                    if (slotStart == initialStartTimestamp) {
+                        continue
+                    }
+                }
+            }
+
             if (setsOfChosenID.contains(timeSlots.id)) {
                 val slotStart = timeSlots.startStamp.toLong()
                 val slotEnd = timeSlots.endStamp.toLong()
@@ -322,10 +361,14 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                 for (pos in positions) {
                     selectedUserList.add(usersList.get(pos))
                 }
+
+                Log.i("######AAA##" , initialSelectedUsers.toString())
+
                 adapter =
                     UserAdapter(applicationContext, selectedUserList)
                 recyclerList.adapter = adapter
                 recyclerList.layoutManager = LinearLayoutManager(applicationContext)
+                Log.i("######" , selectedUserList.toString())
                 Toast.makeText(
                     this@MeetingActivity,
                     "Contact List Updated",
@@ -462,8 +505,11 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                 val currentDay = calenderCurrent.get(Calendar.DAY_OF_MONTH)
                 val hourCurrent = calenderCurrent.get(Calendar.HOUR_OF_DAY)
                 val minuteCurrent = calenderCurrent.get(Calendar.MINUTE)
-                Log.i("#######", "$currentDay / $currentMonth / $currentYear -- $hourCurrent : $minuteCurrent ---- $hourOfDay : $minute")
-                if(yearChosen == currentYear && monthChosen == currentMonth && dayChosen == currentDay){
+                Log.i(
+                    "#######",
+                    "$currentDay / $currentMonth / $currentYear -- $hourCurrent : $minuteCurrent ---- $hourOfDay : $minute"
+                )
+                if (yearChosen == currentYear && monthChosen == currentMonth && dayChosen == currentDay) {
                     if (hourOfDay < hourCurrent || (hourCurrent == hourOfDay && minute < minuteCurrent)) {
                         Log.i("#######", "INSIDE")
                         Toast.makeText(
@@ -476,7 +522,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                         startMinute = minute
                         chooseStartTimeButton.text = "START : $timeText"
                     }
-                }else{
+                } else {
                     startHour = hourOfDay
                     startMinute = minute
                     chooseStartTimeButton.text = "START : $timeText"
