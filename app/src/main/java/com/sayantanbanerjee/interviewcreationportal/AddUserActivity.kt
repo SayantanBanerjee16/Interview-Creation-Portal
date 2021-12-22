@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputLayout
 
+// This activity is responsible to add a new user to the server database.
 class AddUserActivity : AppCompatActivity() {
 
     // Variable binding both name and email address Text Input Layouts to it

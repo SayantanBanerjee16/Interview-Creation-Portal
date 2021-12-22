@@ -30,6 +30,7 @@ class FirebaseConnections {
             ).show()
         }
 
+        // To upload a new meeting to firebase realtime database
         fun uploadMeetingToFirebase(
             context: Context,
             meetingName: String,
@@ -60,29 +61,34 @@ class FirebaseConnections {
             ).show()
         }
 
+        // To delete an existing meeting from the firebase
         fun deleteMeeting(
             context: Context,
             meetingId: String,
             selectedUserList: List<User>,
             startTimestamp: String
         ) {
+            // remove the meeting details
             val reference = Firebase.database.reference
             reference.child(context.getString(R.string.meeting)).child(meetingId).removeValue()
+            // remove the time-slots of the users associated with the meeting
             for (users in selectedUserList) {
                 reference.child(context.getString(R.string.users)).child(users.id)
                     .child(context.getString(R.string.slots)).child(startTimestamp).removeValue()
             }
         }
 
+        // To delete an existing meeting while updating from the firebase
         fun deleteMeetingWhileUpdating(
             context: Context,
             meetingId: String,
             initialSelectedUsers: ArrayList<String>,
             startTimestamp: String
         ) {
+            // remove the meeting details
             val reference = Firebase.database.reference
             reference.child(context.getString(R.string.meeting)).child(meetingId).removeValue()
-            Log.i("####", startTimestamp)
+            // remove the time-slots of the users associated with the meeting
             for (userId in initialSelectedUsers) {
                 reference.child(context.getString(R.string.users)).child(userId)
                     .child(context.getString(R.string.slots)).child(startTimestamp).removeValue()

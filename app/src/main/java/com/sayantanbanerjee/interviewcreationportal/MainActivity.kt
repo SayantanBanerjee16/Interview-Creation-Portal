@@ -19,7 +19,7 @@ import com.sayantanbanerjee.interviewcreationportal.data.Slot
 // and also have two FAB (floating action button) routing user to Add User Activity and Add/Update Meeting Activity.
 class MainActivity : AppCompatActivity() {
 
-    // Variable binding Add User Floating Action Button view to it
+    // Variables binding all the UI related views.
     private lateinit var addUserButton: FloatingActionButton
     private lateinit var addMeetingButton: FloatingActionButton
     private lateinit var adapter: MeetingAdapter
@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Defining the Recycler View to display all the meetings in a list.
         recyclerList =
             findViewById<RecyclerView>(R.id.meetingRooms) as RecyclerView
 
@@ -51,18 +52,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // If network is present, then fetch the meeting list from the firebase database.
         if (NetworkConnectivity.isNetworkAvailable(this))
             fetchMeetingList()
     }
 
     private fun fetchMeetingList() {
-
+        // Fetching the list from the firebase database
         val reference = Firebase.database.reference
         reference.child(getString(R.string.meeting)).addListenerForSingleValueEvent(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
 
+                        // Traversing in the meetings, extracting the data, and inserting in a list.
                         val meetingRooms: MutableList<Meeting> = mutableListOf()
                         for (dataSnapshot in snapshot.children) {
                             val id = dataSnapshot.child("id").value.toString()
@@ -76,8 +79,8 @@ class MainActivity : AppCompatActivity() {
                             meetingRooms.add(currentMeetingRoom)
                         }
 
-                        Log.i("###", meetingRooms.size.toString())
-
+                        // After the list is fetched from the server, we set up in the adapter.
+                        // The recycler adapter displays the whole list, as card item format.
                         adapter =
                             MeetingAdapter(applicationContext, meetingRooms)
                         recyclerList.adapter = adapter

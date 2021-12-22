@@ -13,14 +13,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sayantanbanerjee.interviewcreationportal.data.Meeting
 import java.text.SimpleDateFormat
 
+// This class is used to setup the recycler adapter for the meeting list in MainActivity.kt
 class MeetingAdapter(private val context: Context, private val meetings: List<Meeting>) :
     RecyclerView.Adapter<MeetingAdapter.ViewHolder>() {
 
+    // Setting up the layout
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context)
             .inflate(R.layout.item_meeting, parent, false)
-        //return ViewHolder(view)
         return ViewHolder(view).listen { pos, type ->
+            // Clicking on a meeting should open the DisplayActivity.kt,
+            // where it is displayed in a much broader way.
+            // For that, pass parameters to the intent, to share data from this activity to that activity.
             val item = meetings[pos]
             val intent = Intent(context, DisplayActivity::class.java)
             intent.putExtra("EDIT", true)
@@ -33,8 +37,11 @@ class MeetingAdapter(private val context: Context, private val meetings: List<Me
         }
     }
 
+    // Setting up the data.
     @SuppressLint("SimpleDateFormat")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        // Get the data about the current position, parse it, adn display it in the current card of the recycler view.
         val meeting = meetings[position]
         holder.meetingRoomName.text = meeting.name
 
@@ -50,13 +57,14 @@ class MeetingAdapter(private val context: Context, private val meetings: List<Me
         return meetings.size
     }
 
+    // Getting the views
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val meetingRoomName = view.findViewById<TextView>(R.id.meetingRoomName)!!
         val timeStampStart = view.findViewById<TextView>(R.id.timestampStart)!!
         val timeStampEnd = view.findViewById<TextView>(R.id.timeStampEnd)!!
-
     }
 
+    // Setting up the click listener
     fun <T : RecyclerView.ViewHolder> T.listen(event: (position: Int, type: Int) -> Unit): T {
         itemView.setOnClickListener {
             event.invoke(adapterPosition, itemViewType)
