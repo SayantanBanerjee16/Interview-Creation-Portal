@@ -11,13 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.InterviewCreationPortal">
-        <activity android:name=".DisplayActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".MeetingActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".AddUserActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".DisplayActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MeetingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddUserActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

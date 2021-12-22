@@ -9,7 +9,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +18,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.sayantanbanerjee.interviewcreationportal.data.User
 import com.sayantanbanerjee.interviewcreationportal.data.UserSlot
@@ -46,7 +44,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     private lateinit var recyclerList: RecyclerView
     private lateinit var insertOrUpdateDisplay: TextView
 
-    // Initialize all the variables which holds date and time
+    // Initialize all the variables which holds date and start and end time
     private var startTimeClicked: Boolean = false
     var dayChosen = -1
     var monthChosen = -1
@@ -57,6 +55,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     var endMinute = -1
     var timeStampStart = ""
     var timeStampEnd = ""
+
+    // Define global variables to hold the meeting details
     var selectedUserList: MutableList<User> = mutableListOf()
     var userTimeSlots: MutableList<UserSlot> = mutableListOf()
     var isUpdate = false
@@ -69,6 +69,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_meeting)
+
+        // Initialize the views
         meetingName = findViewById(R.id.nameOfMeeting)
         chooseDateButton = findViewById(R.id.chooseDatePicker)
         chooseStartTimeButton = findViewById(R.id.chooseStartTimePicker)
@@ -79,6 +81,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             findViewById<RecyclerView>(R.id.usersInInterview) as RecyclerView
         insertOrUpdateDisplay = findViewById(R.id.insertOrUpdateDisplay)
 
+        // Get the details of the existing meeting if the screen is set as UPDATION.
         val intent = intent
         val isEditingVersion = intent.getBooleanExtra("EDIT", false)
         if (isEditingVersion) {
@@ -151,16 +154,17 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
         }
 
-        // On clicking the button to add meeting, it will first validate the input fields,
-        // and upon passing validation, it will add the meeting on the firebase.
+        // On clicking the button to add/update meeting, it will first validate the input fields,
+        // and upon passing validation, it will add/update the meeting on the firebase.
         addMeetingButton.setOnClickListener {
             if (validationOfFields()) {
                 if (NetworkConnectivity.isNetworkAvailable(this)) {
-                    // If network connectivity present, first check if any of the contact gets collided with the given timestamp.
+                    // first convert the date and time fields to EPOCH
                     parseDateTimeToTimeStamp()
+                    // If network connectivity present, first check if any of the contact gets collided with the given timestamp.
                     if (!collisionCheck(selectedUserList)) {
                         // If no collision present, you are good to go.
-                        // If it is update, delete the previous stored info,
+                        // If it is update, delete the previous stored meeting info,
                         if (isUpdate) {
                             FirebaseConnections.deleteMeetingWhileUpdating(
                                 this,
@@ -199,10 +203,9 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
         }
 
-        // First it will fetch the user details from the server and display in a list.
-        // From the list, it will display in a recycler view,
-        // then afterwards it will update at the firebase.
+        // First it will fetch the user details from the server and display in a Checkbox dialog list.
         addUserToTheMeeting.setOnClickListener {
+            // Fetch user list only when network connectivity is present.
             if (NetworkConnectivity.isNetworkAvailable(this))
                 fetchUsersList()
             else {
@@ -214,6 +217,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     }
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
+    // If the current activity is set as update, then extract the initial information of the meeting
+    // and update the global variables and UI views.
     private fun updateViewModify(name: String, meetingStartTime: String, meetingEndTime: String) {
         addMeetingButton.text = getString(R.string.UPDATE_MEETING)
         insertOrUpdateDisplay.text = getString(R.string.UPDATE_A_MEETING)
@@ -241,6 +246,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         fetchInitialUserList(meetingId)
     }
 
+    // If the current activity is set as update, then extract the initial user list added to the meeting.
     private fun fetchInitialUserList(meetingID: String) {
         userTimeSlots.clear()
         val reference = Firebase.database.reference
@@ -249,6 +255,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.exists()) {
+
+                            // Traversing in the meetings, extracting the data, and inserting in a list.
                             val usersList: MutableList<User> = mutableListOf()
                             for (dataSnapshot in snapshot.children) {
                                 val id = dataSnapshot.child("UID").value.toString()
@@ -257,6 +265,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                                     User(id, name, "")
                                 usersList.add(currentUser)
 
+                                // Extracting the time-slots also of the users.
                                 for (timeSnapshot in dataSnapshot.child("slots").children) {
                                     val start = timeSnapshot.child("startStamp").value.toString()
                                     val end = timeSnapshot.child("endStamp").value.toString()
@@ -265,14 +274,15 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                                 }
                             }
 
+                            // After the list is fetched from the server, we set up in the adapter.
+                            // The recycler adapter displays the whole list, as card item format.
                             selectedUserList = usersList
                             initialSelectedUsers = usersList
-
                             adapter =
                                 UserAdapter(applicationContext, selectedUserList)
                             recyclerList.adapter = adapter
                             recyclerList.layoutManager = LinearLayoutManager(applicationContext)
-                            
+
                         }
                     }
 
@@ -283,11 +293,17 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
     }
 
+    // This function checks for if the selected user list contains any user whose time slot collide with already scheduled time slots.
     private fun collisionCheck(selectedUserList: MutableList<User>): Boolean {
+
+        // first we build a set for all the selected users list
         val setsOfChosenID = mutableSetOf<String>()
         for (users in selectedUserList) {
             setsOfChosenID.add(users.id)
         }
+
+        // next we build a set for all the users who were already present in the meeting beforehand
+        // (applied for update case only, not for insert)
         val setsOfAlreadyRegisteredID = mutableSetOf<String>()
         if (isUpdate) {
             for (userId in initialSelectedId) {
@@ -295,11 +311,15 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
         }
 
+        // extracting the meeting start and end timestamp
         val meetingStart = timeStampStart.toLong()
         val meetingEnd = timeStampEnd.toLong()
 
         val userActualTimeSlotsToCheck: MutableList<UserSlot> = mutableListOf()
 
+        // we extract the time slots of all the people ->
+        // except the time slots for people who were already in the interview,
+        // and their time slots are in the range [initial start time , initial end tme]
         for (timeSlots in userTimeSlots) {
             if (isUpdate) {
                 if (setsOfAlreadyRegisteredID.contains(timeSlots.id)) {
@@ -318,20 +338,23 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
         }
 
+        // now in the selected time slots, check if the current meeting time collides with any one of them.
         for (timeSlots in userActualTimeSlotsToCheck) {
-
             if (setsOfChosenID.contains(timeSlots.id)) {
                 val slotStart = timeSlots.startStamp.toLong()
                 val slotEnd = timeSlots.endStamp.toLong()
                 if (!(meetingEnd < slotStart || meetingStart > slotEnd)) {
+                    // collision found
                     return true
                 }
             }
         }
+
+        // no collision found
         return false
     }
 
-    // This function is run to fetch the user list from the server.
+    // This function is run to fetch ALL the user list from the server.
     private fun fetchUsersList() {
         userTimeSlots.clear()
         val reference = Firebase.database.reference
@@ -340,6 +363,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
 
+                        // Traversing in the meetings, extracting the data, and inserting in a list.
                         val usersList: MutableList<User> = mutableListOf()
                         val usersNameList: MutableList<String> = mutableListOf()
                         for (dataSnapshot in snapshot.children) {
@@ -360,6 +384,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
                         }
 
+                        // Displaying the checkbox dialog based on the fetched list
                         dialog(usersNameList, usersList)
 
                     }
@@ -371,7 +396,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             })
     }
 
-    // Dialog to display all the users list to choose from.
+    // Dialog to display all the users in a checkbox list to choose from.
     private fun dialog(usersNameList: MutableList<String>, usersList: List<User>) {
         LovelyChoiceDialog(this)
             .setTopColorRes(R.color.darkRed)
@@ -385,13 +410,12 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                     selectedUserList.add(usersList.get(pos))
                 }
 
-                Log.i("######AAA##", initialSelectedUsers.toString())
-
+                // Based on the chosen list, the adapter of the recycler view is updated.
                 adapter =
                     UserAdapter(applicationContext, selectedUserList)
                 recyclerList.adapter = adapter
                 recyclerList.layoutManager = LinearLayoutManager(applicationContext)
-                Log.i("######", selectedUserList.toString())
+
                 Toast.makeText(
                     this@MeetingActivity,
                     "Contact List Updated",
@@ -406,6 +430,8 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
     // Validation of fields before uploading in the server.
     private fun validationOfFields(): Boolean {
+
+        // Name field kept as blank verification
         val nameOfMeeting = meetingName.editText?.text.toString()
         if (nameOfMeeting == "") {
             Toast.makeText(
@@ -416,6 +442,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             return false
         }
 
+        // Field kept blank Verification
         if (yearChosen == -1 || startHour == -1 || endHour == -1) {
             Toast.makeText(
                 this,
@@ -425,6 +452,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             return false
         }
 
+        // Start Date cannot be lesser than Current Date Verification
         val calenderCurrent = Calendar.getInstance()
         val currentYear = calenderCurrent.get(Calendar.YEAR)
         var currentMonth = calenderCurrent.get(Calendar.MONTH)
@@ -439,6 +467,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             return false
         }
 
+        // Start Time cannot be lesser than Current Time Verification
         val hourCurrent = calenderCurrent.get(Calendar.HOUR_OF_DAY)
         val minuteCurrent = calenderCurrent.get(Calendar.MINUTE)
         if (yearChosen == currentYear && monthChosen == currentMonth && dayChosen == currentDay) {
@@ -452,7 +481,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
         }
 
-
+        // Selected user list to the meeting from the whole user list is less than 2 verification
         if (selectedUserList.size <= 1) {
             Toast.makeText(
                 this,
@@ -462,6 +491,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             return false
         }
 
+        // all verifications are perfect.
         return true
     }
 
@@ -487,6 +517,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         val currentMonth = calenderCurrent.get(Calendar.MONTH)
         val currentDay = calenderCurrent.get(Calendar.DAY_OF_MONTH)
 
+        // Start Date cannot be lesser than Current Date Verification
         if (year < currentYear || (year == currentYear && month < currentMonth) || (year == currentYear && month == currentMonth && dayOfMonth < currentDay)) {
             Toast.makeText(
                 this,
@@ -505,11 +536,12 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     }
 
     @SuppressLint("SetTextI18n")
-// Setting of the chosen time from the time picker dialog
+    // Setting of the chosen time from the time picker dialog
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         val timeText: String = "$hourOfDay : $minute"
         if (startTimeClicked) {
             if (endHour != -1) {
+                // Start Time cannot be lesser than End Time verification
                 if (endHour < hourOfDay || (endHour == hourOfDay && endMinute <= minute)) {
                     Toast.makeText(
                         this,
@@ -529,13 +561,10 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                 val currentDay = calenderCurrent.get(Calendar.DAY_OF_MONTH)
                 val hourCurrent = calenderCurrent.get(Calendar.HOUR_OF_DAY)
                 val minuteCurrent = calenderCurrent.get(Calendar.MINUTE)
-                Log.i(
-                    "#######",
-                    "$currentDay / $currentMonth / $currentYear -- $hourCurrent : $minuteCurrent ---- $hourOfDay : $minute"
-                )
+
+                // Start Time cannot be lesser than Current Time verification
                 if (yearChosen == currentYear && monthChosen == currentMonth && dayChosen == currentDay) {
                     if (hourOfDay < hourCurrent || (hourCurrent == hourOfDay && minute < minuteCurrent)) {
-                        Log.i("#######", "INSIDE")
                         Toast.makeText(
                             this,
                             "Start Time cannot be lesser than Current Time!",
@@ -555,6 +584,7 @@ class MeetingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
 
         } else {
+            // Start Time cannot be greater than End Time verification
             if (startHour > hourOfDay || (startHour == hourOfDay && startMinute >= minute)) {
                 Toast.makeText(
                     this,
